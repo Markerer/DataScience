@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dataFactoryName": {
+      "value": "MOL"
+    },
+	"dataFactoryLocation": {
+      "value": "North Europe"
+    },
+    "AzureBlobStorage1_connectionString": {
+      "value": "DefaultEndpointsProtocol=https;AccountName=molmpk1;AccountKey=Yv6B36eiXJUvPhYOu0kIiCw5jkfaXVG/OKJv77fRxC14yyT6Clsag5cqm9VLLhLPiPueshb9bZRzDABMb30oJw==;EndpointSuffix=core.windows.net"
+    },
+    "NKelemen_connectionString": {
+      "value": "Data Source=nkelemen.hu;Initial Catalog=mol_pk;User ID=mol_pk;Password=hFKmjfjR4LY"
+    },
+    "AzureFunction1_functionKey": {
+      "value": "MkYdzurZcUG8rVKgcv4DqP/39pBE8eD0sQX0/jsNShAghXlw5Foa9Q=="
+    },
+    "iw29_uploaded_properties_typeProperties_scope": {
+      "value": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/testtest/providers/Microsoft.Storage/storageAccounts/molmpk1"
+    },
+    "iw39_uploaded_properties_typeProperties_scope": {
+      "value": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/testtest/providers/Microsoft.Storage/storageAccounts/molmpk1"
+    },
+    "zspm_ext_serv_upload_properties_typeProperties_scope": {
+      "value": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/testtest/providers/Microsoft.Storage/storageAccounts/molmpk1"
+    }
+  }
+}
