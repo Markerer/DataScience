@@ -1,0 +1,4157 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataFactoryName": {
+            "type": "string",
+            "metadata": "Data Factory Name"
+        },
+		"dataFactoryLocation": {
+			"type": "string",
+			"allowedValues": [
+				"West Europe",
+				"North Europe"
+			],
+			"defaultValue": "North Europe",
+			"metadata": {
+				"description": "Location of the data factory. Currently, only North and West Europe are supported. "
+			}
+		},
+        "AzureBlobStorage1_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+        },
+        "NKelemen_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'NKelemen'"
+        },
+        "AzureFunction1_functionKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'functionKey' of 'AzureFunction1'"
+        },
+        "iw29_uploaded_properties_typeProperties_scope": {
+            "type": "string",
+            "defaultValue": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/MOL_MPK/providers/Microsoft.Storage/storageAccounts/molmpk"
+        },
+        "iw39_uploaded_properties_typeProperties_scope": {
+            "type": "string",
+            "defaultValue": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/MOL_MPK/providers/Microsoft.Storage/storageAccounts/molmpk"
+        },
+        "zspm_ext_serv_upload_properties_typeProperties_scope": {
+            "type": "string",
+            "defaultValue": "/subscriptions/10960dc7-5c4b-484d-b4d5-aa5000ff1802/resourceGroups/MOL_MPK/providers/Microsoft.Storage/storageAccounts/molmpk"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/iw29_uploaded')]",
+            "type": "Microsoft.DataFactory/factories/triggers",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "runtimeState": "Started",
+                "pipelines": [
+                    {
+                        "pipelineReference": {
+                            "referenceName": "iw29_update",
+                            "type": "PipelineReference"
+                        },
+                        "parameters": {}
+                    }
+                ],
+                "type": "BlobEventsTrigger",
+                "typeProperties": {
+                    "blobPathBeginsWith": "/mol/blobs/iw29",
+                    "blobPathEndsWith": ".csv",
+                    "scope": "[parameters('iw29_uploaded_properties_typeProperties_scope')]",
+                    "events": [
+                        "Microsoft.Storage.BlobCreated"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/pipelines/iw29_update')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/iw39_uploaded')]",
+            "type": "Microsoft.DataFactory/factories/triggers",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "runtimeState": "Started",
+                "pipelines": [
+                    {
+                        "pipelineReference": {
+                            "referenceName": "iw39_update",
+                            "type": "PipelineReference"
+                        },
+                        "parameters": {}
+                    }
+                ],
+                "type": "BlobEventsTrigger",
+                "typeProperties": {
+                    "blobPathBeginsWith": "/mol/blobs/iw39",
+                    "blobPathEndsWith": ".csv",
+                    "scope": "[parameters('iw39_uploaded_properties_typeProperties_scope')]",
+                    "events": [
+                        "Microsoft.Storage.BlobCreated"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/pipelines/iw39_update')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/zspm_ext_serv_upload')]",
+            "type": "Microsoft.DataFactory/factories/triggers",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "runtimeState": "Started",
+                "pipelines": [
+                    {
+                        "pipelineReference": {
+                            "referenceName": "zspm_ext_serv_update",
+                            "type": "PipelineReference"
+                        },
+                        "parameters": {}
+                    }
+                ],
+                "type": "BlobEventsTrigger",
+                "typeProperties": {
+                    "blobPathBeginsWith": "/mol/blobs/zspm",
+                    "blobPathEndsWith": ".csv",
+                    "scope": "[parameters('zspm_ext_serv_upload_properties_typeProperties_scope')]",
+                    "events": [
+                        "Microsoft.Storage.BlobCreated"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/pipelines/zspm_ext_serv_update')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/AzureBlobStorage1')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobStorage",
+                "typeProperties": {
+                    "connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/NKelemen')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "SqlServer",
+                "typeProperties": {
+                    "connectionString": "[parameters('NKelemen_connectionString')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/AzureFunction1')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureFunction",
+                "typeProperties": {
+                    "functionAppUrl": "https://markerermpk.azurewebsites.net",
+                    "functionKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureFunction1_functionKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/SourceDataset_qui')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "iw29.csv",
+                        "folderPath": "iw29",
+                        "container": "mol"
+                    },
+                    "columnDelimiter": ";",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "Notification type",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Created By",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Created On",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Created at",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Reference date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Reference time",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Planner group",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Required Start",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Required End",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority text",
+                        "type": "String"
+                    },
+                    {
+                        "name": "User Status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "System status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description of functional location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description of Technical Object",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Coding Code",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Code group text",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Coding code text",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/DestinationDataset_qui')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "NKelemen",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "SqlServerTable",
+                "schema": [
+                    {
+                        "name": "Notification type",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Created By",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Created On",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Created at",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Code group text",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Coding code text",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "System status",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description of functional location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description of Technical Object",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Coding Code",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Planner group",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Required Start",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Required End",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Priority",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Priority text",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "User Status",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Reference date",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Reference time",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Order",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    }
+                ],
+                "typeProperties": {
+                    "tableName": "[[dbo].[IW29_staging]"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/SourceDataset_gq2')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "iw39.csv",
+                        "folderPath": "iw39",
+                        "container": "mol"
+                    },
+                    "columnDelimiter": ";",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "Order Type",
+                        "type": "String"
+                    },
+                    {
+                        "name": "MaintActivityType",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Entered by",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Created on",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Planner group",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Basic start date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Basic finish date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority text",
+                        "type": "String"
+                    },
+                    {
+                        "name": "User Status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "System status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description of functional location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Description of Technical Object",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Revision",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WBS order header",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Maintenance Plan",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Maintenance item",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Estimated costs",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Total sum (plan)",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Total actual costs",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Currency",
+                        "type": "String"
+                    },
+                    {
+                        "name": "System Condition",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Superior Order",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/DestinationDataset_gq2')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "NKelemen",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "SqlServerTable",
+                "schema": [
+                    {
+                        "name": "System Condition",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Superior Order",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Maintenance Plan",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Maintenance item",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Estimated costs",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Total sum (plan)",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Total actual costs",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Currency",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description of functional location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description of Technical Object",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Revision",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "WBS order header",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Basic start date",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Basic finish date",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Priority",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Priority text",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "User Status",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "System status",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Created on",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Location",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Planner group",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Order Type",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "MaintActivityType",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Order",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Description",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    },
+                    {
+                        "name": "Entered by",
+                        "type": "nvarchar",
+                        "precision": 0,
+                        "scale": 0
+                    }
+                ],
+                "typeProperties": {
+                    "tableName": "[[dbo].[IW39_staging]"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/SourceDataset_kaj')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "zspm_ext_serv.csv",
+                        "folderPath": "zspm_ext_serv",
+                        "container": "mol"
+                    },
+                    "columnDelimiter": ";",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "Order Type",
+                        "type": "String"
+                    },
+                    {
+                        "name": "MaintActivityType",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order short text",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority Order",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order user status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Ord. system status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "String"
+                    },
+                    {
+                        "name": "System Condition",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Revision",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Revision Description",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WBS element",
+                        "type": "String"
+                    },
+                    {
+                        "name": "PPU plan",
+                        "type": "String"
+                    },
+                    {
+                        "name": "PPU plan desc",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Superior Order",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Basic Start Date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Basic finish date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Required Start",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Required End",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Actual start date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Actual finish date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Request short text",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Priority Notification",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Notif. user status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Notif. syst. status",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Risk",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Acc. quotation",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DM Number",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Reason of replanning",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Order reference date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFSD last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SFBU first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SFBU last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REFR first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REFR last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REVI first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REVI last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "QWFA first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "QWFA last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "1QAC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2QAC first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2QAC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "QACC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "PCOW first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "PCOW last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "COMW last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SWFA first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SWFA last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "1SAC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2SAC first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "2SAC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SACC first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SACC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SDIP first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SDIP last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WUMA first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WUMA last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFTA first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFTA last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SFTA first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SFTA last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REV first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "REV last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WRJC first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WRJC last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFTP first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFTP last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFPS last date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "RFPS first date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Inv. Date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP tool",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP internal work",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP internal material",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP external work",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP external material",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CP - all",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Estimated costs/Quotation",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Planned material SN",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES Number",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES rejection number",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Reason of SES rejection",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES internal material",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES external material",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES Int service",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES Ext. service",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SES Tool",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Total SES Value",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Actual material costs",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Total actual costs",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Purchasing Document",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Item",
+                        "type": "String"
+                    },
+                    {
+                        "name": "External company",
+                        "type": "String"
+                    },
+                    {
+                        "name": "MTN engineer",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Specialist(Engineer)",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Cost owner",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Asset Team Leader",
+                        "type": "String"
+                    },
+                    {
+                        "name": "M-CAPEX Manager",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TA Off./FM Proj. Man",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Invoice number",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/DestinationDataset_kaj')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "NKelemen",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "SqlServerTable",
+                "schema": [
+                    {
+                        "name": "Order Type",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "MaintActivityType",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Order",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Order short text",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Location",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Plant section",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Cost Center",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Priority Order",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Order user status",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Ord  system status",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Functional Location",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Equipment",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "System Condition",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Revision",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Revision Description",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "WBS element",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "PPU plan",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "PPU plan desc",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Superior Order",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Basic Start Date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Basic finish date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Required Start",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Required End",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Actual start date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Actual finish date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Notification",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Request short text",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Priority Notification",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Notif  user status",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Notif  syst  status",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Risk",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Acc  quotation",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "DM Number",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Reason of replanning",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Order reference date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFSD last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SFBU first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SFBU last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REFR first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REFR last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REVI first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REVI last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "QWFA first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "QWFA last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "1QAC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "2QAC first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "2QAC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "QACC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "PCOW first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "PCOW last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "COMW last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SWFA first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SWFA last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "1SAC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "2SAC first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "2SAC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SACC first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SACC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SDIP first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SDIP last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "WUMA first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "WUMA last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFTA first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFTA last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SFTA first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SFTA last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REV first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "REV last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "WRJC first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "WRJC last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFTP first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFTP last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFPS last date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "RFPS first date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Inv  Date",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP tool",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP internal work",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP internal material",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP external work",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP external material",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "CP - all",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Estimated costs Quotation",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Planned material SN",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES Number",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES rejection number",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Reason of SES rejection",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES internal material",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES external material",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES Int service",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES Ext  service",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "SES Tool",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Total SES Value",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Actual material costs",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Total actual costs",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Purchasing Document",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Item",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "External company",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "MTN engineer",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Specialist(Engineer)",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Cost owner",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Asset Team Leader",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "M-CAPEX Manager",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "TA Off  FM Proj  Man",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "Invoice number",
+                        "type": "nvarchar"
+                    }
+                ],
+                "typeProperties": {
+                    "tableName": "[[dbo].[ZSPM_EXT_SERV_staging]"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/iw29_update')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "iw29_copy_data_from_csv_to_sql",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_iw29",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [
+                            {
+                                "name": "Source",
+                                "value": "iw29//IW29.csv"
+                            },
+                            {
+                                "name": "Destination",
+                                "value": "[[dbo].[TEST_IW29]"
+                            }
+                        ],
+                        "typeProperties": {
+                            "source": {
+                                "type": "DelimitedTextSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSetting",
+                                    "recursive": true
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSetting",
+                                    "skipLineCount": 0
+                                }
+                            },
+                            "sink": {
+                                "type": "SqlServerSink"
+                            },
+                            "enableStaging": false,
+                            "enableSkipIncompatibleRow": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
+                                        "source": {
+                                            "name": "Notification type",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notification type",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Created By",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Created By",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Created On",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Created On",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Created at",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Created at",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Code group text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Code group text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Coding code text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Coding code text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "System status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "System status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description of functional location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description of functional location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description of Technical Object",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description of Technical Object",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Coding Code",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Coding Code",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Planner group",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Planner group",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Required Start",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Required Start",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Required End",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Required End",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "User Status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "User Status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Reference date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Reference date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Reference time",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Reference time",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceDataset_qui",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationDataset_qui",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "truncate_iw29",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[TruncateStagingTable]",
+                            "storedProcedureParameters": {
+                                "table": {
+                                    "value": "IW29_staging",
+                                    "type": "String"
+                                }
+                            }
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "transfer_iw29",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [
+                            {
+                                "activity": "iw29_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[Transfer_IW29]"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "Send Truncate Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_iw29",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW29_Truncation error",
+                                "ErrorMessage": {
+                                    "value": "@{activity('truncate_iw29').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Copy Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "iw29_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW29_Copy error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('iw29_copy_data_from_csv_to_sql').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Success Email",
+                        "type": "WebActivity",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_iw29",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "url": "https://prod-37.northeurope.logic.azure.com:443/workflows/c230b723b5514b868d109158b2f5dbf0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gAz00cL39O6WXHKxGgxfbayblg08UTif-ZuAvxNS7Uc",
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": {
+                                "DataFactoryName": "@{pipeline().DataFactory}",
+                                "PipelineName": "@{pipeline().Pipeline}",
+                                "Subject": "IW29_Pipeline finished",
+                                "ErrorMessage": "Everything worked as expected",
+                                "EmailTo": "tolesz11@windowslive.com"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Transfer Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_iw29",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW29_transfer error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('transfer_iw29').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "annotations": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/SourceDataset_qui')]",
+                "[concat(variables('factoryId'), '/datasets/DestinationDataset_qui')]",
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]",
+                "[concat(variables('factoryId'), '/pipelines/Send Notification')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/iw39_update')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "iw39_copy_data_from_csv_to_sql",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_iw39",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [
+                            {
+                                "name": "Source",
+                                "value": "mol/iw39/iw39.csv"
+                            },
+                            {
+                                "name": "Destination",
+                                "value": "[[dbo].[TEST_IW39]"
+                            }
+                        ],
+                        "typeProperties": {
+                            "source": {
+                                "type": "DelimitedTextSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSetting",
+                                    "recursive": true
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSetting",
+                                    "skipLineCount": 0
+                                }
+                            },
+                            "sink": {
+                                "type": "SqlServerSink"
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
+                                        "source": {
+                                            "name": "Order Type",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order Type",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "MaintActivityType",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "MaintActivityType",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Entered by",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Entered by",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Created on",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Created on",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Planner group",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Planner group",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Basic start date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Basic start date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Basic finish date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Basic finish date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "User Status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "User Status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "System status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "System status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description of functional location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description of functional location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Description of Technical Object",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Description of Technical Object",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Revision",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Revision",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WBS order header",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WBS order header",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Maintenance Plan",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Maintenance Plan",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Maintenance item",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Maintenance item",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Estimated costs",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Estimated costs",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Total sum (plan)",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Total sum plan",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Total actual costs",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Total actual costs",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Currency",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Currency",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "System Condition",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "System Condition",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Superior Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Superior Order",
+                                            "type": "String"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceDataset_gq2",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationDataset_gq2",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "truncate_iw39",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[TruncateStagingTable]",
+                            "storedProcedureParameters": {
+                                "table": {
+                                    "value": "IW39_staging",
+                                    "type": "String"
+                                }
+                            }
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "transfer_iw39",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [
+                            {
+                                "activity": "iw39_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[Transfer_IW39]"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "Send Success Email",
+                        "type": "WebActivity",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_iw39",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "url": "https://prod-37.northeurope.logic.azure.com:443/workflows/c230b723b5514b868d109158b2f5dbf0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gAz00cL39O6WXHKxGgxfbayblg08UTif-ZuAvxNS7Uc",
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": {
+                                "DataFactoryName": "@{pipeline().DataFactory}",
+                                "PipelineName": "@{pipeline().Pipeline}",
+                                "Subject": "IW39_Pipeline finished",
+                                "ErrorMessage": "Everything worked as expected",
+                                "EmailTo": "tolesz11@windowslive.com"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Truncate Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_iw39",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW39_Truncation error",
+                                "ErrorMessage": {
+                                    "value": "@{activity('truncate_iw39').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Copy Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "iw39_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW39_Copy error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('iw39_copy_data_from_csv_to_sql').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Transfer Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_iw39",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "IW39_transfer error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('transfer_iw39').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "annotations": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/SourceDataset_gq2')]",
+                "[concat(variables('factoryId'), '/datasets/DestinationDataset_gq2')]",
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]",
+                "[concat(variables('factoryId'), '/pipelines/Send Notification')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/zspm_ext_serv_update')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "zspm_ext_serv_copy_data_from_csv_to_sql",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_zspm_ext_serv",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [
+                            {
+                                "name": "Source",
+                                "value": "mol/zspm_ext_serv/zspm_ext_serv.csv"
+                            },
+                            {
+                                "name": "Destination",
+                                "value": "[[dbo].[TEST_ZSPM_EXT_SERV]"
+                            }
+                        ],
+                        "typeProperties": {
+                            "source": {
+                                "type": "DelimitedTextSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSetting",
+                                    "recursive": true
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSetting",
+                                    "skipLineCount": 0
+                                }
+                            },
+                            "sink": {
+                                "type": "SqlServerSink"
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
+                                        "source": {
+                                            "name": "Order Type",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order Type",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "MaintActivityType",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "MaintActivityType",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order short text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order short text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Plant section",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Cost Center",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority Order",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order user status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order user status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Ord. system status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Ord. system status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Functional Location",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Equipment",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "System Condition",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "System Condition",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Revision",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Revision",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Revision Description",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Revision Description",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WBS element",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WBS element",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "PPU plan",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "PPU plan",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "PPU plan desc",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "PPU plan desc",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Superior Order",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Superior Order",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Basic Start Date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Basic Start Date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Basic finish date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Basic finish date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Required Start",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Required Start",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Required End",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Required End",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Actual start date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Actual start date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Actual finish date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Actual finish date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notification",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Request short text",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Request short text",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Priority Notification",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Priority Notification",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Notif. user status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notif. user status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Notif. syst. status",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Notif. syst. status",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Risk",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Risk",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Acc. quotation",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Acc. quotation",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "DM Number",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "DM Number",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Reason of replanning",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Reason of replanning",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Order reference date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Order reference date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFSD last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFSD last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SFBU first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SFBU first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SFBU last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SFBU last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REFR first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REFR first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REFR last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REFR last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REVI first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REVI first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REVI last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REVI last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "QWFA first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "QWFA first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "QWFA last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "QWFA last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "1QAC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "1QAC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "2QAC first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "2QAC first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "2QAC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "2QAC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "QACC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "QACC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "PCOW first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "PCOW first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "PCOW last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "PCOW last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "COMW last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "COMW last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SWFA first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SWFA first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SWFA last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SWFA last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "1SAC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "1SAC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "2SAC first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "2SAC first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "2SAC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "2SAC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SACC first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SACC first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SACC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SACC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SDIP first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SDIP first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SDIP last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SDIP last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WUMA first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WUMA first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WUMA last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WUMA last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFTA first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFTA first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFTA last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFTA last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SFTA first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SFTA first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SFTA last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SFTA last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REV first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REV first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "REV last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "REV last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WRJC first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WRJC first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "WRJC last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "WRJC last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFTP first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFTP first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFTP last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFTP last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFPS last date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFPS last date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "RFPS first date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "RFPS first date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Inv. Date",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Inv. Date",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP tool",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP tool",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP internal work",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP internal work",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP internal material",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP internal material",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP external work",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP external work",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP external material",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP external material",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "CP - all",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "CP - all",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Estimated costs/Quotation",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Estimated costs/Quotation",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Planned material SN",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Planned material SN",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES Number",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES Number",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES rejection number",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES rejection number",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Reason of SES rejection",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Reason of SES rejection",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES internal material",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES internal material",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES external material",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES external material",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES Int service",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES Int service",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES Ext. service",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES Ext. service",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "SES Tool",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "SES Tool",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Total SES Value",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Total SES Value",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Actual material costs",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Actual material costs",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Total actual costs",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Total actual costs",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Purchasing Document",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Purchasing Document",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Item",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Item",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "External company",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "External company",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "MTN engineer",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "MTN engineer",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Specialist(Engineer)",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Specialist(Engineer)",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Cost owner",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Cost owner",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Asset Team Leader",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Asset Team Leader",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "M-CAPEX Manager",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "M-CAPEX Manager",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "TA Off./FM Proj. Man",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "TA Off./FM Proj. Man",
+                                            "type": "String"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "Invoice number",
+                                            "type": "String"
+                                        },
+                                        "sink": {
+                                            "name": "Invoice number",
+                                            "type": "String"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceDataset_kaj",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationDataset_kaj",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "truncate_zspm_ext_serv",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[TruncateStagingTable]",
+                            "storedProcedureParameters": {
+                                "table": {
+                                    "value": "ZSPM_EXT_SERV_staging",
+                                    "type": "String"
+                                }
+                            }
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "transfer_zspm_ext_serv",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [
+                            {
+                                "activity": "zspm_ext_serv_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "[[dbo].[Transfer_ZSPM_EXT_SERV]"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "NKelemen",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "Send success email",
+                        "type": "WebActivity",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_zspm_ext_serv",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "url": "https://prod-37.northeurope.logic.azure.com:443/workflows/c230b723b5514b868d109158b2f5dbf0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gAz00cL39O6WXHKxGgxfbayblg08UTif-ZuAvxNS7Uc",
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": {
+                                "DataFactoryName": "@{pipeline().DataFactory}",
+                                "PipelineName": "@{pipeline().Pipeline}",
+                                "Subject": "ZSPM_Pipeline finished",
+                                "ErrorMessage": "Everything worked as expected",
+                                "EmailTo": "tolesz11@windowslive.com"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send truncate error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "truncate_zspm_ext_serv",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "ZSPM_Truncation error",
+                                "ErrorMessage": {
+                                    "value": "@{activity('truncate_zspm_ext_serv').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Copy Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "zspm_ext_serv_copy_data_from_csv_to_sql",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "ZSPM_Copy error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('zspm_ext_serv_copy_data_from_csv_to_sql').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Send Transfer Error",
+                        "type": "ExecutePipeline",
+                        "dependsOn": [
+                            {
+                                "activity": "transfer_zspm_ext_serv",
+                                "dependencyConditions": [
+                                    "Failed"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "pipeline": {
+                                "referenceName": "Send Notification",
+                                "type": "PipelineReference"
+                            },
+                            "waitOnCompletion": true,
+                            "parameters": {
+                                "EmailTo": "tolesz11@windowslive.com",
+                                "Subject": "ZSPM_transfer error occured",
+                                "ErrorMessage": {
+                                    "value": "@{activity('transfer_zspm_ext_serv').Error.Message}",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "annotations": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/SourceDataset_kaj')]",
+                "[concat(variables('factoryId'), '/datasets/DestinationDataset_kaj')]",
+                "[concat(variables('factoryId'), '/linkedServices/NKelemen')]",
+                "[concat(variables('factoryId'), '/pipelines/Send Notification')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('dataFactoryName'), '/Send Notification')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Send Email",
+                        "type": "WebActivity",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "url": "https://prod-37.northeurope.logic.azure.com:443/workflows/c230b723b5514b868d109158b2f5dbf0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gAz00cL39O6WXHKxGgxfbayblg08UTif-ZuAvxNS7Uc",
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": {
+                                "DataFactoryName": "@{pipeline().DataFactory}",
+                                "PipelineName": "@{pipeline().Pipeline}",
+                                "Subject": "@{pipeline().parameters.Subject}",
+                                "ErrorMessage": "@{pipeline().parameters.ErrorMessage}",
+                                "EmailTo": "@pipeline().parameters.EmailTo"
+                            }
+                        }
+                    }
+                ],
+                "parameters": {
+                    "EmailTo": {
+                        "type": "string",
+                        "defaultValue": "No email set!"
+                    },
+                    "Subject": {
+                        "type": "string",
+                        "defaultValue": "No subject set!"
+                    },
+                    "ErrorMessage": {
+                        "type": "string",
+                        "defaultValue": "No message set!"
+                    }
+                },
+                "annotations": []
+            },
+            "dependsOn": []
+        }
+    ]
+}
